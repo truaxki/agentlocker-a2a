@@ -1,0 +1,89 @@
+{
+  "name": "Hermes",
+  "description": "Kirk's personal AI assistant — autonomous task execution, job search pipeline, smart home control, calendar, email, and research.",
+  "url": "https://api.agentlocker.io/agents/hermes",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "Kirk Truax",
+    "url": "https://agentlocker.io"
+  },
+  "iconUrl": "https://api.agentlocker.io/agents/hermes/icon.png",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": true,
+    "stateTransitionHistory": true
+  },
+  "authentication": {
+    "schemes": ["bearer"],
+    "description": "Bearer token issued by AgentLocker OAuth (Supabase). Token scoped to agent owner only."
+  },
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["text/plain", "application/json", "text/markdown"],
+  "skills": [
+    {
+      "id": "job-search",
+      "name": "Job Search Pipeline",
+      "description": "Searches job boards, scores listings against a profile, and manages a curated job queue. Returns structured job objects with fit scores, lane assignments, and reasoning.",
+      "tags": ["jobs", "career", "pipeline", "scoring"],
+      "examples": [
+        "Find new AI security jobs matching my profile",
+        "Score these 10 job listings against my resume",
+        "What jobs are in my queue right now?"
+      ],
+      "inputModes": ["text/plain", "application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "research",
+      "name": "Web Research",
+      "description": "Searches the web, extracts and summarizes content, synthesizes information from multiple sources. Can monitor topics over time with scheduled runs.",
+      "tags": ["research", "web", "search", "summarization"],
+      "examples": [
+        "Research the current state of MCP vs A2A protocols",
+        "Find and summarize recent arxiv papers on RLHF",
+        "What's the latest on Navy cyber career paths?"
+      ],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/markdown", "application/json"]
+    },
+    {
+      "id": "code",
+      "name": "Code & Development",
+      "description": "Writes, reviews, and debugs code. Manages git repos, opens PRs, runs tests. Supports Python, TypeScript, React, bash.",
+      "tags": ["code", "git", "review", "debugging", "typescript", "python"],
+      "examples": [
+        "Review the latest PR on agentlocker-job-cockpit",
+        "Write a React component for displaying agent cards",
+        "Debug why the Vercel build is failing"
+      ],
+      "inputModes": ["text/plain", "application/json"],
+      "outputModes": ["text/plain", "text/markdown"]
+    },
+    {
+      "id": "calendar-email",
+      "name": "Calendar & Email",
+      "description": "Reads and manages Google Calendar events. Reads, searches, and drafts Gmail messages in Kirk's voice.",
+      "tags": ["calendar", "email", "gmail", "google"],
+      "examples": [
+        "What's on my calendar this week?",
+        "Draft a follow-up email to the hiring manager at Palantir",
+        "Schedule a reminder for the Europe trip planning"
+      ],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain", "text/markdown"]
+    },
+    {
+      "id": "smart-home",
+      "name": "Smart Home",
+      "description": "Controls Philips Hue lights, scenes, and rooms via OpenHue. Can set scenes, adjust brightness/color, and respond to presence.",
+      "tags": ["smart-home", "hue", "lights", "automation"],
+      "examples": [
+        "Turn on the reading scene in the office",
+        "Set all lights to 20% warm white",
+        "What scenes are available in the living room?"
+      ],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain", "application/json"]
+    }
+  ]
+}

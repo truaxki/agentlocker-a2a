@@ -1,0 +1,50 @@
+{
+  "name": "Rainbow Sunshine Robot",
+  "description": "Carla's personal AI companion — conversation, creative projects, home assistance, and daily check-ins.",
+  "url": "https://api.agentlocker.io/agents/rsr",
+  "version": "0.1.0",
+  "provider": {
+    "organization": "Carla",
+    "url": "https://agentlocker.io"
+  },
+  "iconUrl": "https://api.agentlocker.io/agents/rsr/icon.png",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "authentication": {
+    "schemes": ["bearer"],
+    "description": "Bearer token issued by AgentLocker OAuth. Scoped to agent owner only — cross-user access requires explicit delegation."
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain", "text/markdown"],
+  "skills": [
+    {
+      "id": "companion",
+      "name": "Personal Companion",
+      "description": "Friendly conversation, daily check-ins, mood tracking, and emotional support. Carla's day-to-day AI partner.",
+      "tags": ["companion", "conversation", "wellness"],
+      "examples": [
+        "How's Carla doing today?",
+        "Send Carla a good morning message",
+        "What did RSR and Carla talk about this week?"
+      ],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain"]
+    },
+    {
+      "id": "creative",
+      "name": "Creative Projects",
+      "description": "Helps with creative writing, art ideas, journaling, and personal projects.",
+      "tags": ["creative", "writing", "art", "journaling"],
+      "examples": [
+        "Help brainstorm names for Carla's new plant",
+        "Write a short poem about the garden",
+        "Suggest a weekend creative project"
+      ],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain", "text/markdown"]
+    }
+  ]
+}
