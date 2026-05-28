@@ -119,11 +119,13 @@ alter table public.jobs
 create index if not exists jobs_embedding_hnsw_idx 
   on public.jobs using hnsw (embedding vector_cosine_ops);
 
--- Search function — accepts query vector, returns ranked candidates
+-- Search function — accepts query vector and optional metadata filters, returns ranked candidates
 create or replace function public.search_jobs_by_vector(
-  query_embedding  vector(768),
-  match_threshold  float   default 0.35,
-  match_count      int     default 50
+  query_embedding            vector(768),
+  match_threshold            float   default 0.35,
+  match_count                int     default 50,
+  filter_remote_policy       text    default 'all',
+  filter_clearance_required  boolean default null
 )
 returns table (
   id               uuid,
@@ -142,6 +144,10 @@ language sql stable security definer as $$
   from public.jobs
   where embedding is not null
     and 1 - (embedding <=> query_embedding) > match_threshold
+    -- Relational metadata filter 1: remote policy check
+    and (filter_remote_policy = 'all' or remote_policy = filter_remote_policy)
+    -- Relational metadata filter 2: clearance requirement check (optional)
+    and (filter_clearance_required is null or clearance_required = filter_clearance_required)
   order by embedding <=> query_embedding
   limit match_count;
 $$;
