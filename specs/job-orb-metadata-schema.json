@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "A2A Job Orb Metadata Schema",
+  "description": "The standardized payload and metadata contract that Ironborn Archer (scrapers) must tag raw jobs with when writing to the public database, which Astra (evaluators) utilizes for hybrid querying.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Normalized job title, e.g., 'Senior React Developer'."
+    },
+    "company": {
+      "type": "string",
+      "description": "Name of the hiring organization."
+    },
+    "location": {
+      "type": "string",
+      "description": "Geographical location, e.g., 'Denver, CO' or 'Remote'."
+    },
+    "remote_policy": {
+      "type": "string",
+      "enum": ["remote", "hybrid", "onsite"],
+      "description": "The strict remote working policy. CRITICAL: Scrapers must deduce this from the job description if not explicitly declared."
+    },
+    "clearance_required": {
+      "type": "boolean",
+      "description": "True if the job requires an active US security clearance (Secret, TS/SCI, Polygraph). Scrapers must scan description for clearance keywords."
+    },
+    "clearance_level": {
+      "type": "string",
+      "enum": ["none", "secret", "top_secret", "ts_sci", "polygraph"],
+      "description": "The specific level of clearance required."
+    },
+    "salary_range": {
+      "type": "object",
+      "properties": {
+        "min": { "type": ["integer", "null"] },
+        "max": { "type": ["integer", "null"] },
+        "currency": { "type": "string", "default": "USD" }
+      }
+    },
+    "posted_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO-8601 date string when the job was posted, e.g., '2026-05-26'."
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Direct application url to the employer's portal (Lever, Greenhouse, Workday)."
+    }
+  },
+  "required": ["title", "company", "location", "remote_policy", "clearance_required", "source_url"]
+}
