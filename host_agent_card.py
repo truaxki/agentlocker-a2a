@@ -96,6 +96,17 @@ CARD_DATA = {
       ],
       "inputModes": ["application/json"],
       "outputModes": ["application/json"]
+    },
+    {
+      "id": "cdp-screenshot",
+      "name": "Local Active Chrome CDP Screen Capturer",
+      "description": "Connects over Chrome DevTools Protocol (CDP) to an already-running Chrome browser on the MacBook (typically port 9222), identifies the active tab, and captures a high-resolution screenshot. Useful for verifying pages where the user is already logged in.",
+      "tags": ["cdp", "chrome", "screenshot", "active-session"],
+      "examples": [
+        "Take a CDP screenshot of Kirk's active logged-in LinkedIn session."
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     }
   ]
 }
@@ -265,6 +276,43 @@ def execute_close_interactive_session(params):
         except Exception as e:
             return {"success": True, "message": "No active interactive browser session was running."}
 
+def _clear_singleton_lock():
+    global ACTIVE_LOGIN_PREP_PROCESS
+    if ACTIVE_LOGIN_PREP_PROCESS and ACTIVE_LOGIN_PREP_PROCESS.poll() is None:
+        try:
+            ACTIVE_LOGIN_PREP_PROCESS.terminate()
+            ACTIVE_LOGIN_PREP_PROCESS.wait(timeout=2)
+        except Exception:
+            pass
+    ACTIVE_LOGIN_PREP_PROCESS = None
+
+def execute_cdp_screenshot(params):
+    cdp_url = params.get("cdp_url", "http://localhost:9222")
+    
+    _clear_singleton_lock()
+    
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.connect_over_cdp(cdp_url)
+            context = browser.contexts[0]
+            page = context.pages[0] if context.pages else context.new_page()
+            
+            title = page.title()
+            url = page.url
+            
+            safe_name = "cdp-screenshot.png"
+            screenshot_path = ARTIFACTS_DIR / safe_name
+            page.screenshot(path=str(screenshot_path))
+            
+            return {
+                "success": True,
+                "title": title,
+                "url": url,
+                "screenshot_url": f"http://100.108.131.116:9999/artifacts/{safe_name}"
+            }
+    except Exception as e:
+        return {"error": f"CDP connect failed: {str(e)}"}
+
 class AgentCardHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         # Serve the agent card
@@ -317,6 +365,8 @@ class AgentCardHandler(http.server.BaseHTTPRequestHandler):
                     result = execute_interactive_login_prep(params)
                 elif skill == "close-interactive-session":
                     result = execute_close_interactive_session(params)
+                elif skill == "cdp-screenshot":
+                    result = execute_cdp_screenshot(params)
                 elif skill == "form-prep":
                     result = {"success": True, "message": "Form filler is initialized. Manual validation active. Stopping before submit.", "gated": True}
                 else:
