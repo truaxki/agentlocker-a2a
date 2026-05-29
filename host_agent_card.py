@@ -334,8 +334,21 @@ def execute_cdp_screenshot(params):
         with sync_playwright() as p:
             browser = p.chromium.connect_over_cdp(cdp_url)
             context = browser.contexts[0]
-            page = context.pages[0] if context.pages else context.new_page()
-            
+
+            # Find the active/focused tab instead of always grabbing pages[0]
+            active_page = None
+            for p in context.pages:
+                try:
+                    if p.evaluate("document.hasFocus()"):
+                        active_page = p
+                        break
+                except Exception:
+                    continue
+            # Fallback: last opened tab (most recent), then first
+            if active_page is None:
+                active_page = context.pages[-1] if context.pages else context.new_page()
+            page = active_page
+
             title = page.title()
             url = page.url
             
